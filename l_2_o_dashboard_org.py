@@ -274,7 +274,7 @@ with tab2:
     # Add conversion % annotations for each team (optional)
     annotations = []
     for idx, row in funnel_team_df.iterrows():
-        if row["Stage"] != "Leads":  # show % above bar for Quotes/Orders
+        if row["Stage"] = "Orders Won":  # show % above bar for Orders
             annotations.append(dict(
                 x=row["Stage"],
                 y=row["Count"],
