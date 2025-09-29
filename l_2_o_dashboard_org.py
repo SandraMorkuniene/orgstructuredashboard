@@ -283,12 +283,20 @@ with tab3:
         st.subheader("⚖️ Approval Outcomes")
         #approval_counts = fdf.groupby("Approval_Level").size().reset_index(name="count")
         #st.bar_chart(approval_counts.set_index("Approval_Level"))
-        approval_team_df = fdf.groupby(["Sales_Team","Approval_Level"]).size().reset_index(name="count")
+        approval_counts = fdf.groupby(["Approval_Level","Sales_Team"]).size().reset_index(name="count")
 
-        fig = px.bar(approval_team_df, x="Sales_Team", y="count", color="Approval_Level", 
-                     text="count", barmode="stack", title="Approval Outcomes by Team")
+        fig = px.bar(
+            approval_counts,
+            x="Approval_Level",
+            y="count",
+            color="Sales_Team",
+            title="⚖️ Approval Outcomes by Team",
+            barmode="stack",  # stacked bars
+            text="count"
+        )
+        fig.update_traces(textposition='auto')
         st.plotly_chart(fig, use_container_width=True)
-
+        
         discount_by_rep = fdf.groupby(["Sales_Rep", "Sales_Team"]).agg(
             avg_discount=("Discount","mean"),
             avg_expected_margin=("Expected_Margin","mean"),
@@ -305,7 +313,7 @@ with tab3:
             title="💰 Discount Discipline by Rep: Avg Discount vs Expected Margin",
             labels={"avg_discount":"Average Discount %", "avg_expected_margin":"Average Expected Margin"}
         )
-        fig_discount.update_layout(xaxis_tickformat=".0%")
+        fig_discount.update_layout(xaxis_tickformat=".0f")
         st.plotly_chart(fig_discount, use_container_width=True)
         
 
