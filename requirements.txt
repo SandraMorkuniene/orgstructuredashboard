@@ -2,7 +2,7 @@ streamlit==1.37.0
 pandas==2.2.2
 numpy==1.26.4
 matplotlib==3.9.2
-plotly==5.24.0
+plotly>=5.15.0
 scikit-learn==1.5.1
 xgboost==2.1.1
 streamlit-aggrid==0.3.4.post3
