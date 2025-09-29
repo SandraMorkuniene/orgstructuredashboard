@@ -289,7 +289,7 @@ with tab3:
                      text="count", barmode="stack", title="Approval Outcomes by Team")
         st.plotly_chart(fig, use_container_width=True)
 
-        discount_by_rep = fdf.groupby("Sales_Rep", "Sales_Team").agg(
+        discount_by_rep = fdf.groupby(["Sales_Rep", "Sales_Team"]).agg(
             avg_discount=("Discount","mean"),
             avg_expected_margin=("Expected_Margin","mean"),
             total_quotes=("Lead_ID","count")
