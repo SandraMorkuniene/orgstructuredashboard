@@ -250,7 +250,7 @@ with tab2:
         st.markdown("**Conversion table**")
         st.dataframe(funnel_df.style.format({"count":"{:,}", "conversion_from_prev":"{:.1%}"}), use_container_width=True)
 
-    st.subheader("📈 Margin Distributions by Service & Region")
+    st.subheader("📈 Margin Distributions by Team, Service & Region")
     if fdf.empty:
         st.info("No margin data to display.")
     else:
@@ -289,11 +289,11 @@ with tab3:
                      text="count", barmode="stack", title="Approval Outcomes by Team")
         st.plotly_chart(fig, use_container_width=True)
 
-        discount_by_rep = fdf.groupby("Sales_Rep").agg(
-    avg_discount=("Discount","mean"),
-    avg_expected_margin=("Expected_Margin","mean"),
-    total_quotes=("Lead_ID","count")
-).reset_index().sort_values("avg_discount", ascending=False)
+        discount_by_rep = fdf.groupby("Sales_Rep", "Sales_Team").agg(
+            avg_discount=("Discount","mean"),
+            avg_expected_margin=("Expected_Margin","mean"),
+            total_quotes=("Lead_ID","count")
+        ).reset_index().sort_values("avg_discount", ascending=False)
         fig_discount = px.scatter(
             discount_by_rep,
             x="avg_discount",
