@@ -66,8 +66,6 @@ def generate_data(n=5000, seed=42):
 
 # -------------------- Dashboard --------------------
 df = generate_data()
-st.set_page_config(layout="wide")
-st.title("📊 L2O Revenue Management Dashboard with Org Accountability")
 
 # Filters
 with st.sidebar:
