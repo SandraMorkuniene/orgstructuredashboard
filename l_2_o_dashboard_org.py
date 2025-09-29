@@ -4,6 +4,10 @@ import numpy as np
 import plotly as px
 import datetime
 
+st.set_page_config(page_title="L2O Profitability & Process Dashboard (Redesigned)", layout="wide")
+st.title("Lead-to-Order (L2O) — Profitability & Process Dashboard")
+st.caption("Prototype uses synthetic data.")
+
 # -------------------- Synthetic Data Generator --------------------
 @st.cache_data
 def generate_data(n=5000, seed=42):
