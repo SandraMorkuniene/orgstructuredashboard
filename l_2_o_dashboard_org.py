@@ -287,8 +287,8 @@ with tab2:
     st.plotly_chart(fig, use_container_width=True)
 
 
-        st.markdown("**Conversion table**")
-        st.dataframe(funnel_df.style.format({"count":"{:,}", "conversion_from_prev":"{:.1%}"}), use_container_width=True)
+    st.markdown("**Conversion table**")
+    st.dataframe(funnel_df.style.format({"count":"{:,}", "conversion_from_prev":"{:.1%}"}), use_container_width=True)
 
     st.subheader("📈 Margin Distributions by Team, Service & Region")
     if fdf.empty:
