@@ -464,7 +464,7 @@ with tab5:
 
             # Grouped summary by customer & route
             st.write("### Alerts summary — group by Customer & Route")
-            grouped_alerts = alerts.groupby(["Customer","Route", "Sales_Team"]).agg(alerts_count=("Lead_ID","count"), avg_expected_margin=("Expected_Margin","mean"), total_quoted=("Quoted_Price","sum")).reset_index().sort_values('alerts_count', ascending=False)
+            grouped_alerts = alerts.groupby(["Customer","Route", "Sales_Rep"]).agg(alerts_count=("Lead_ID","count"), avg_expected_margin=("Expected_Margin","mean"), total_quoted=("Quoted_Price","sum")).reset_index().sort_values('alerts_count', ascending=False)
             st.dataframe(grouped_alerts.style.format({"avg_expected_margin":"{:.1%}", "total_quoted":"${:,.2f}"}), use_container_width=True)
 
             # Suggested actions
