@@ -314,7 +314,8 @@ with tab3:
             title="💰 Discount Discipline by Rep: Avg Discount vs Expected Margin",
             labels={"avg_discount":"Average Discount %", "avg_expected_margin":"Average Expected Margin"}
         )
-        fig_discount.update_layout(xaxis_tickformat=".0f")
+        fig_discount.update_layout(xaxis_tickformat=".2f")
+        fig_discount.update_xaxes(dtick=0.5)
         st.plotly_chart(fig_discount, use_container_width=True)
         
 
