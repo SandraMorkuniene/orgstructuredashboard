@@ -238,15 +238,53 @@ with tab2:
         fig.update_layout(annotations=annotations)
         st.plotly_chart(fig, use_container_width=True)
 
-        funnel_by_team = fdf.copy()
-        funnel_by_team["Stage"] = "Leads"
-        funnel_by_team.loc[fdf["Quote_Won"], "Stage"] = "Orders Won"
+        if not fdf.empty:
+            teams = fdf["Sales_Team"].unique()
+            funnel_data = []
         
-        funnel_team_df = funnel_by_team.groupby(["Stage","Sales_Team"]).size().reset_index(name="count")
+            for team in teams:
+                team_df = fdf[fdf["Sales_Team"] == team]
+                leads_count = len(team_df)
+                quotes_count = team_df.shape[0]  # all quotes generated for the team
+                orders_count = team_df[team_df["Quote_Won"] == True].shape[0]
+                # Conversion rates
+                conv_leads_to_quotes = quotes_count / leads_count if leads_count>0 else 0
+                conv_quotes_to_orders = orders_count / quotes_count if quotes_count>0 else 0
+                conv_leads_to_orders = orders_count / leads_count if leads_count>0 else 0
         
-        fig = px.bar(funnel_team_df, x="Stage", y="count", color="Sales_Team", text="count", 
-                     title="Funnel by Stage & Team (Stacked)", barmode="stack")
-        st.plotly_chart(fig, use_container_width=True)
+                funnel_data.extend([
+                    {"Stage":"Leads","Sales_Team":team,"Count":leads_count,"Conversion":1.0},
+                    {"Stage":"Quotes Sent","Sales_Team":team,"Count":quotes_count,"Conversion":conv_leads_to_quotes},
+                    {"Stage":"Orders Won","Sales_Team":team,"Count":orders_count,"Conversion":conv_leads_to_orders}
+                ])
+        
+            funnel_team_df = pd.DataFrame(funnel_data)
+        
+            # Stacked bar chart: x = Stage, y = Count, color = Sales_Team
+            fig = px.bar(
+                funnel_team_df,
+                x="Stage",
+                y="Count",
+                color="Sales_Team",
+                text="Count",
+                barmode="stack",
+                title="Funnel by Stage & Team (Counts & Conversion %)"
+            )
+
+    # Add conversion % annotations for each team (optional)
+    annotations = []
+    for idx, row in funnel_team_df.iterrows():
+        if row["Stage"] != "Leads":  # show % above bar for Quotes/Orders
+            annotations.append(dict(
+                x=row["Stage"],
+                y=row["Count"],
+                text=f"{row['Conversion']*100:.1f}%",
+                showarrow=False,
+                xanchor='center',
+                yanchor='bottom'
+            ))
+    fig.update_layout(annotations=annotations)
+    st.plotly_chart(fig, use_container_width=True)
 
 
         st.markdown("**Conversion table**")
