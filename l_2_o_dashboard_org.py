@@ -302,10 +302,11 @@ with tab3:
             avg_expected_margin=("Expected_Margin","mean"),
             total_quotes=("Lead_ID","count")
         ).reset_index().sort_values("avg_discount", ascending=False)
+        discount_by_rep["avg_discount_pct"] = discount_by_rep["avg_discount"] * 100
         
         fig_discount = px.scatter(
             discount_by_rep,
-            x="avg_discount",
+            x="avg_discount_pct",
             y="avg_expected_margin",
             size="total_quotes",
             color="Sales_Team",
