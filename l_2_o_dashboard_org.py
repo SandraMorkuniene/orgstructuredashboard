@@ -225,16 +225,7 @@ with tab2:
         funnel_df["conversion_from_prev"] = funnel_df["count"].pct_change().fillna(1)
         funnel_df["conversion_label"] = (funnel_df["conversion_from_prev"]*100).apply(lambda x: f"{x:.0f}%")
 
-        funnel_by_team = fdf.copy()
-        funnel_by_team["Stage"] = "Leads"
-        funnel_by_team.loc[fdf["Quote_Won"], "Stage"] = "Orders Won"
-        
-        funnel_team_df = funnel_by_team.groupby(["Stage","Sales_Team"]).size().reset_index(name="count")
-        
-        fig = px.bar(funnel_team_df, x="Stage", y="count", color="Sales_Team", text="count", 
-                     title="Funnel by Stage & Team (Stacked)", barmode="stack")
-        st.plotly_chart(fig, use_container_width=True)
-
+    
         # Bar chart for absolute counts with conversion annotations
         fig = go.Figure()
         fig.add_trace(go.Bar(x=funnel_df["stage"], y=funnel_df["count"], text=funnel_df["count"], textposition='auto', name='Count'))
@@ -246,6 +237,17 @@ with tab2:
         fig.update_layout(title='Funnel: Lead → Quote → Order (counts with conversion %)')
         fig.update_layout(annotations=annotations)
         st.plotly_chart(fig, use_container_width=True)
+
+        funnel_by_team = fdf.copy()
+        funnel_by_team["Stage"] = "Leads"
+        funnel_by_team.loc[fdf["Quote_Won"], "Stage"] = "Orders Won"
+        
+        funnel_team_df = funnel_by_team.groupby(["Stage","Sales_Team"]).size().reset_index(name="count")
+        
+        fig = px.bar(funnel_team_df, x="Stage", y="count", color="Sales_Team", text="count", 
+                     title="Funnel by Stage & Team (Stacked)", barmode="stack")
+        st.plotly_chart(fig, use_container_width=True)
+
 
         st.markdown("**Conversion table**")
         st.dataframe(funnel_df.style.format({"count":"{:,}", "conversion_from_prev":"{:.1%}"}), use_container_width=True)
@@ -265,6 +267,29 @@ with tab2:
         # violin by region
         fig_violin_region = px.violin(fdf, x='Region', y='Expected_Margin', box=True, points='outliers', title='Expected Margin Distribution by Region')
         st.plotly_chart(fig_violin_region, use_container_width=True)
+        
+        discount_by_rep = fdf.groupby(["Sales_Rep", "Sales_Team"]).agg(
+            avg_discount=("Discount","mean"),
+            avg_expected_margin=("Expected_Margin","mean"),
+            total_quotes=("Lead_ID","count")
+        ).reset_index().sort_values("avg_discount", ascending=False)
+        discount_by_rep["avg_discount_pct"] = discount_by_rep["avg_discount"] * 100
+        
+        fig_discount = px.scatter(
+            discount_by_rep,
+            x="avg_discount_pct",
+            y="avg_expected_margin",
+            size="total_quotes",
+            color="Sales_Team",
+            hover_data=["Sales_Rep","total_quotes"],
+            title="💰 Discount Discipline by Rep: Avg Discount vs Expected Margin",
+            labels={"avg_discount":"Average Discount %", "avg_expected_margin":"Average Expected Margin"}
+        )
+        fig_discount.update_layout(xaxis_tickformat=".2f")
+        fig_discount.update_xaxes(dtick=0.5)
+        st.plotly_chart(fig_discount, use_container_width=True)
+
+
 
 # ----------------------
 # Tab 3 — Process Efficiency
@@ -297,31 +322,7 @@ with tab3:
         fig.update_traces(textposition='auto')
         st.plotly_chart(fig, use_container_width=True)
         
-        discount_by_rep = fdf.groupby(["Sales_Rep", "Sales_Team"]).agg(
-            avg_discount=("Discount","mean"),
-            avg_expected_margin=("Expected_Margin","mean"),
-            total_quotes=("Lead_ID","count")
-        ).reset_index().sort_values("avg_discount", ascending=False)
-        discount_by_rep["avg_discount_pct"] = discount_by_rep["avg_discount"] * 100
-        
-        fig_discount = px.scatter(
-            discount_by_rep,
-            x="avg_discount_pct",
-            y="avg_expected_margin",
-            size="total_quotes",
-            color="Sales_Team",
-            hover_data=["Sales_Rep","total_quotes"],
-            title="💰 Discount Discipline by Rep: Avg Discount vs Expected Margin",
-            labels={"avg_discount":"Average Discount %", "avg_expected_margin":"Average Expected Margin"}
-        )
-        fig_discount.update_layout(xaxis_tickformat=".2f")
-        fig_discount.update_xaxes(dtick=0.5)
-        st.plotly_chart(fig_discount, use_container_width=True)
-        
-
-
-
-        
+    
 
         st.subheader("💸 Delay & Extra-Cost Impact by Reason")
         # extra cost impact grouped by reason
