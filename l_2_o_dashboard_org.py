@@ -438,7 +438,7 @@ with tab5:
         if alerts.empty:
             st.write("No alerts in filtered set — good job!")
         else:
-            display_cols = ["Lead_ID","Lead_Date","Customer","Route","Service_Type","Quoted_Price","Estimated_Cost","Expected_Margin","Discount","Approval_Level","Quote_Won"]
+            display_cols = ["Lead_ID","Lead_Date","Customer","Route","Service_Type", "Sales_Rep","Quoted_Price","Estimated_Cost","Expected_Margin","Discount","Approval_Level","Quote_Won"]
             styled = alerts[display_cols].style.format({"Quoted_Price":"${:,.2f}","Estimated_Cost":"${:,.2f}","Expected_Margin":"{:.1%}","Discount":"{:.1%}"})
             # apply per-row style: map to columns in order: Expected_Margin, Discount, Approval_Level -> we will apply with subset
             # pandas Styler row-wise apply returns list matching number of columns; to keep simple, style only specific columns
