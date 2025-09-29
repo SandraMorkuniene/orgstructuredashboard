@@ -294,6 +294,7 @@ with tab3:
             avg_expected_margin=("Expected_Margin","mean"),
             total_quotes=("Lead_ID","count")
         ).reset_index().sort_values("avg_discount", ascending=False)
+        
         fig_discount = px.scatter(
             discount_by_rep,
             x="avg_discount",
